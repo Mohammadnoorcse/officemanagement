@@ -4,6 +4,7 @@ import Sidebar from "../component/admin/sidebar";
 import logo from "../assets/logo.png"
 import DashboardContent from "../component/admin/DashboardContent";
 import Attendance from "../component/admin/Attendance";
+import axios from "axios";
 
 export default function Dashboard() {
   const navigate = useNavigate();
