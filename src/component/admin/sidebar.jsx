@@ -13,15 +13,13 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
 
       <div
         className={`
-            w-64 flex flex-col p-4
+          w-64 h-screen bg-white flex flex-col p-4
           md:relative md:translate-x-0
-          fixed top-0 left-0  z-30
+          fixed top-0 left-0 z-30
           transform transition-transform duration-300
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-       
-
         <button
           className={`py-2 px-4 mb-2 text-left rounded ${
             active === "dashboard" ? "bg-[#531954] text-white" : ""
@@ -32,6 +30,18 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
           }}
         >
           Dashboard
+        </button>
+
+        <button
+          className={`py-2 px-4 mb-2 text-left rounded ${
+            active === "user" ? "bg-[#531954] text-white" : ""
+          }`}
+          onClick={() => {
+            setActive("user");
+            setSidebarOpen(false);
+          }}
+        >
+          Employee
         </button>
 
         <button
@@ -48,18 +58,20 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
 
         <button
           className={`py-2 px-4 mb-2 text-left rounded ${
-            active === "reports" ? "bg-[#531954] text-white" : ""
+            active === "salary" ? "bg-[#531954] text-white" : ""
           }`}
           onClick={() => {
-            setActive("reports");
+            setActive("salary");
             setSidebarOpen(false);
           }}
         >
-          Reports
+          Salary
         </button>
 
+        {/* Logout button (shows only when sidebar is open on mobile, always visible on desktop) */}
         <button
-          className="mt-auto py-2 px-4 bg-red-600 rounded cursor-pointer"
+          className={`mt-auto py-2 px-4 bg-red-600 text-white rounded cursor-pointer
+            ${sidebarOpen ? "block" : "hidden md:block"}`}
           onClick={handleLogout}
         >
           Logout

@@ -1,248 +1,260 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { LuAlarmClockMinus } from "react-icons/lu";
+import { FaRegUser } from "react-icons/fa";
+import graph1 from "../../assets/graph1.png";
+import graph2 from "../../assets/graph2.png";
+import graph3 from "../../assets/graph3.png";
+import graph4 from "../../assets/graph4.png";
 
 const DashboardContent = () => {
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [users, setUsers] = useState([]);
-
-  const [showModal, setShowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [newRole, setNewRole] = useState("");
-
-  const rowsPerPage = 5;
-
-  // Fetch Users
-  const fetchUsers = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    setUsers(res.data);
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  // Filter data
-  const filteredData = users.filter(
-    (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.email.toLowerCase().includes(search.toLowerCase()) ||
-      item.role.toLowerCase().includes(search.toLowerCase())
-  );
-
-  // Pagination
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
-
-  // Handle Role Update
-  const updateRole = async () => {
-    const token = localStorage.getItem("token");
-
-    await axios.put(
-      `${import.meta.env.VITE_API_URL}/api/users/${selectedUser.id}/role`,
-      { role: newRole },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    setShowModal(false);
-    fetchUsers();
-  };
-
-  const handleDelete = async (id) => {
-    const token = localStorage.getItem("token");
-
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-
-    try {
-        const response = await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/users/${id}`,
-        {
-            headers: {
-            Authorization: `Bearer ${token}`,
-            },
-        }
-        );
-
-        alert(response.data.message);
-
-        // Refresh list
-        setUsers(users.filter((u) => u.id !== id));
-    } catch (error) {
-        alert(error.response?.data?.message || "Delete failed");
-    }
-};
-
-
   return (
-    <div className="flex flex-col gap-4">
-      {/* Search + Add User */}
-      <div className="flex items-center justify-between">
-        <input
-          type="text"
-          placeholder="Search by name, email or role..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/3 px-4 py-2 border rounded-lg focus:outline-none"
-        />
-        <Link
-          to="/admin/register"
-          className="px-4 py-1 rounded-md bg-[#531954] text-white"
-        >
-          Register
-        </Link>
+    <div className="w-full flex flex-col gap-4">
+      <div className="w-full flex justify-between items-center">
+        <div className="">
+          <h1 className="text-xl font-bold text-[#531954]">Hii,Noor!</h1>
+          <p className="text-sm text-gray-400">
+            You have 2 leave request pending
+          </p>
+        </div>
+
+        <div className="p-2 border border-gray-400 rounded-md flex justify-between items-center gap-2">
+          <div>
+            <p className="text-sm text-gray-400">Current time</p>
+            <span className="text-[12px] font-bold text-gray-600">
+              {new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Dhaka",
+                hour12: true,
+              })}
+            </span>
+          </div>
+
+          <span className="text-2xl text-gray-400">
+            <LuAlarmClockMinus />
+          </span>
+        </div>
       </div>
 
-      {/* Table (Desktop) */}
-      <div className="hidden md:block overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="text-left py-2 px-4 border-b">ID</th>
-              <th className="text-left py-2 px-4 border-b">Name</th>
-              <th className="text-left py-2 px-4 border-b">Email</th>
-              <th className="text-left py-2 px-4 border-b">Role</th>
-              <th className="text-left py-2 px-4 border-b">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-b">{user.id}</td>
-                <td className="py-2 px-4 border-b">{user.name}</td>
-                <td className="py-2 px-4 border-b">{user.email}</td>
-                <td className="py-2 px-4 border-b">{user.role}</td>
-                <td className="py-2 px-4 border-b flex gap-2">
-                  <button
-                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600"
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setNewRole(user.role);
-                      setShowModal(true);
-                    }}
-                  >
-                    Edit
-                  </button>
+      {/* second items */}
 
-                  <button  onClick={() => handleDelete(user.id)} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
-                    Delete
-                  </button>
-                  <a href={`/location/${user.id}`}>
-                    location
-                  </a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <div className="w-full flex sm:flex-row flex-col gap-2">
+        {/* items-1 */}
+        <div className="sm:w-2/3 w-full grid grid-cols-2 gap-2">
+          {/* card */}
+          <div className="w-full border border-gray-400 rounded-md p-2 shadow">
+            <div className="w-full flex justify-between items-center">
+              <h2>Employee's total</h2>
+              <div className="w-[1.7rem] h-[1.7rem] bg-green-200 rounded-full flex justify-center items-center">
+                <span className="text-green-400">
+                  <FaRegUser />
+                </span>
+              </div>
+            </div>
 
-      {/* Mobile Cards */}
-      <div className="md:hidden flex flex-col gap-4">
-        {paginatedData.map((user) => (
-          <div
-            key={user.id}
-            className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
-          >
-            <p>
-              <span className="font-bold">ID:</span> {user.id}
-            </p>
-            <p>
-              <span className="font-bold">Name:</span> {user.name}
-            </p>
-            <p>
-              <span className="font-bold">Email:</span> {user.email}
-            </p>
-            <p>
-              <span className="font-bold">Role:</span> {user.role}
-            </p>
-            <div className="flex gap-2 mt-2 relative">
-              <button
-                className="bg-blue-500 text-white px-2 py-1 rounded"
-                onClick={() => {
-                  setSelectedUser(user);
-                  setNewRole(user.role);
-                  setShowModal(true);
-                }}
-              >
-                Edit
-              </button>
-              <button  onClick={() => handleDelete(user.id)} className="bg-red-500 text-white px-2 py-1 rounded">
-                Delete
-              </button>
-
-              <Link to={`/location/${user.id}`}>
-                location
-              </Link>
-
-             
-
+            <div className="flex justify-between items-end mt-4">
+              <span className="text-base font-bold">70</span>
+              <img src={graph1} alt="graph" className="w-16" />
             </div>
           </div>
-        ))}
-      </div>
+          {/* card */}
+          <div className="w-full border border-gray-400 rounded-md p-2 shadow">
+            <div className="w-full flex justify-between items-center">
+              <h2>Employee's present today</h2>
+              <div className="w-[1.7rem] h-[1.7rem] bg-green-200 rounded-full flex justify-center items-center">
+                <span className="text-green-400">
+                  <FaRegUser />
+                </span>
+              </div>
+            </div>
 
-      {/* Pagination */}
-      <div className="flex gap-2 justify-center mt-4">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-3 py-1 border rounded ${
-              currentPage === i + 1 ? "bg-purple-600 text-white" : "bg-white"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
+            <div className="flex justify-between items-end mt-4">
+              <span className="text-base font-bold">65</span>
+              <img src={graph2} alt="graph" className="w-16" />
+            </div>
+          </div>
+          {/* card */}
+          <div className="w-full border border-gray-400 rounded-md p-2 shadow">
+            <div className="w-full flex justify-between items-center">
+              <h2>Employee's leave today</h2>
+              <div className="w-[1.7rem] h-[1.7rem] bg-green-200 rounded-full flex justify-center items-center">
+                <span className="text-green-400">
+                  <FaRegUser />
+                </span>
+              </div>
+            </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-4 rounded shadow w-[20%] h-[10rem] flex flex-col justify-center items-center">
-            {/* Role Selector Only */}
-            <select
-              value={newRole}
-              onChange={(e) => setNewRole(e.target.value)}
-              className="border p-1 rounded w-full"
-            >
-              <option value="admin">admin</option>
-              <option value="user">user</option>
-            </select>
+            <div className="flex justify-between items-end mt-[2rem]">
+              <span className="text-base font-bold">5</span>
+              <img src={graph3} alt="graph" className="w-16" />
+            </div>
+          </div>
+          {/* card */}
+          <div className="w-full border border-gray-400 rounded-md p-2 shadow">
+            <div className="w-full flex justify-between items-center">
+              <h2>Employee's late today</h2>
+              <div className="w-[1.7rem] h-[1.7rem] bg-green-200 rounded-full flex justify-center items-center">
+                <span className="text-green-400">
+                  <FaRegUser />
+                </span>
+              </div>
+            </div>
 
-            {/* Buttons */}
-            <div className="w-full flex  gap-1 mt-2">
-              <button
-                className="w-1/2 bg-green-600 text-white px-2 py-1 rounded"
-                onClick={updateRole}
-              >
-                Save
-              </button>
-
-              <button
-                className="w-1/2 bg-gray-400 text-white px-2 py-1 rounded"
-                onClick={() => setShowModal(false)}
-              >
-                Close
-              </button>
+            <div className="flex justify-between items-end mt-4">
+              <span className="text-base font-bold">7</span>
+              <img src={graph4} alt="graph" className="w-16" />
             </div>
           </div>
         </div>
-      )}
+        {/* items-2 */}
+        <div className="sm:w-1/3 w-full border border-gray-400 p-2 rounded-md">
+          <h2 className="text-sm font-bold text-[#531954]">Task</h2>
+
+          <form action="">
+            <select
+              name="cars"
+              id="cars"
+              className="w-full mt-4 border border-gray-400 rounded "
+            >
+              <option value="volvo">done</option>
+              <option value="saab">Saab</option>
+              <option value="mercedes">Mercedes</option>
+              <option value="audi">Audi</option>
+            </select>
+            <textarea
+              rows="8"
+              name=""
+              id=""
+              placeholder="write the task"
+              className="w-full mt-2 p-4 text-sm rounded border border-gray-300 outline-none"
+            ></textarea>
+            <div className="flex justify-between items-center">
+              <button
+                type="submit"
+                className="bg-[#531954] py-1 px-4 text-white rounded-md cursor-pointer"
+              >
+                submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* third section */}
+      <div className="w-full flex md:flex-row flex-col gap-4 ">
+        {/* item-1 */}
+        <div className="md:w-2/3  border border-gray-400 rounded-md p-2 shadow">
+          <h2 className="text-sm font-bold text-gray-600">
+            Today's Attendance
+          </h2>
+
+          <div className="w-full max-h-[10rem] overflow-y-auto mt-4 ">
+            <table className="w-full text-left">
+              <thead className="bg-gray-100 border-b border-gray-300">
+                <tr>
+                  <th className="p-2 ">Image</th>
+                  <th className="p-2 ">Name</th>
+                  <th className="p-2 ">Check-In</th>
+                  <th className="p-2 ">Check-Out</th>
+                </tr>
+              </thead>
+
+              <tbody >
+                <tr>
+                  <td className="p-2 ">
+                    <img
+                      src="https://img.freepik.com/free-photo/close-up-portrait-handsome-smiling-young-man-white-t-shirt-blurry-outdoor-nature_176420-6305.jpg?semt=ais_hybrid&w=740&q=80"
+                      alt="emp"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </td>
+
+                  <td className="p-2 ">Aminur Rahman</td>
+
+                  <td className="p-2  text-green-600">09:15 AM</td>
+
+                  <td className="p-2  text-red-600">06:05 PM</td>
+                </tr>
+
+                <tr>
+                  <td className="p-2 ">
+                    <img
+                      src="https://img.freepik.com/free-photo/close-up-portrait-handsome-smiling-young-man-white-t-shirt-blurry-outdoor-nature_176420-6305.jpg?semt=ais_hybrid&w=740&q=80"
+                      alt="emp"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </td>
+
+                  <td className="p-2 ">Noor Mohammad</td>
+
+                  <td className="p-2  text-green-600">10:00 AM</td>
+
+                  <td className="p-2  text-red-600">07:00 PM</td>
+                </tr>
+                <tr>
+                  <td className="p-2 ">
+                    <img
+                      src="https://img.freepik.com/free-photo/close-up-portrait-handsome-smiling-young-man-white-t-shirt-blurry-outdoor-nature_176420-6305.jpg?semt=ais_hybrid&w=740&q=80"
+                      alt="emp"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </td>
+
+                  <td className="p-2 ">Noor Mohammad</td>
+
+                  <td className="p-2  text-green-600">10:00 AM</td>
+
+                  <td className="p-2  text-red-600">07:00 PM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="md:w-1/3  border border-gray-400 rounded-md p-2 shadow">
+          <h2 className="text-sm font-bold text-gray-600">Today's Late</h2>
+          <div className="w-full max-h-[10rem] overflow-y-auto mt-4 ">
+            <table className="w-full text-left">
+              <thead className="bg-gray-100 border-b border-gray-300">
+                <tr>
+                 
+                  <th className="p-2 text-[14px]">Name</th>
+                  <th className="p-2 text-[14px]">Check-In</th>
+                  <th className="p-2 text-[14px]">Check-Out</th>
+                </tr>
+              </thead>
+
+              <tbody >
+                <tr>
+                 
+
+                  <td className="p-2 text-[14px]">Aminur Rahman</td>
+
+                  <td className="p-2 text-[14px] text-green-600 ">09:15 AM</td>
+
+                  <td className="p-2 text-[14px] text-red-600">06:05 PM</td>
+                </tr>
+
+                <tr>
+                 
+
+                  <td className="p-2 text-[14px]">Noor Mohammad</td>
+
+                  <td className="p-2 text-[14px] text-green-600">10:00 AM</td>
+
+                  <td className="p-2 text-[14px] text-red-600">07:00 PM</td>
+                </tr>
+                <tr>
+                  
+
+                  <td className="p-2 text-[14px]">Noor Mohammad</td>
+
+                  <td className="p-2 text-[14px] text-green-600">10:00 AM</td>
+
+                  <td className="p-2 text-[14px] text-red-600">07:00 PM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

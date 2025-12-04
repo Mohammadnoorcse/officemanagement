@@ -5,6 +5,8 @@ import logo from "../assets/logo.png"
 import DashboardContent from "../component/admin/DashboardContent";
 import Attendance from "../component/admin/Attendance";
 import axios from "axios";
+import User from "../component/admin/User";
+import Salary from "../component/admin/Salary";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -48,10 +50,12 @@ export default function Dashboard() {
     switch (active) {
       case "dashboard":
         return <DashboardContent />;
+      case "user":
+        return <User/>;
       case "attendace":
         return <Attendance />;
-      case "reports":
-        return <ReportsContent />;
+      case "salary":
+        return <Salary />;
       default:
         return <DashboardContent />;
     }
