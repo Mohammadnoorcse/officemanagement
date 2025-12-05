@@ -48,14 +48,14 @@ export default function UserSidebar({ active, setActive, handleLogout, sidebarOp
 
         <button
           className={`py-2 px-4 mb-2 text-left rounded ${
-            active === "reports" ? "bg-[#531954] text-white" : ""
+            active === "leave" ? "bg-[#531954] text-white" : ""
           }`}
           onClick={() => {
-            setActive("reports");
+            setActive("leave");
             setSidebarOpen(false);
           }}
         >
-          Reports
+          Leave
         </button>
 
         <button

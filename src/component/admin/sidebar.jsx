@@ -67,6 +67,40 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
         >
           Salary
         </button>
+        <button
+          className={`py-2 px-4 mb-2 text-left rounded ${
+            active === "shift" ? "bg-[#531954] text-white" : ""
+          }`}
+          onClick={() => {
+            setActive("shift");
+            setSidebarOpen(false);
+          }}
+        >
+          Shift
+        </button>
+
+        <button
+          className={`py-2 px-4 mb-2 text-left rounded ${
+            active === "leave" ? "bg-[#531954] text-white" : ""
+          }`}
+          onClick={() => {
+            setActive("leave");
+            setSidebarOpen(false);
+          }}
+        >
+          Leave
+        </button>
+        <button
+          className={`py-2 px-4 mb-2 text-left rounded ${
+            active === "holidaymanager" ? "bg-[#531954] text-white" : ""
+          }`}
+          onClick={() => {
+            setActive("holidaymanager");
+            setSidebarOpen(false);
+          }}
+        >
+          HolidayManager
+        </button>
 
         {/* Logout button (shows only when sidebar is open on mobile, always visible on desktop) */}
         <button

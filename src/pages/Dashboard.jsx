@@ -7,6 +7,9 @@ import Attendance from "../component/admin/Attendance";
 import axios from "axios";
 import User from "../component/admin/User";
 import Salary from "../component/admin/Salary";
+import ShiftPage from "../component/admin/ShiftPage";
+import LeavePage from "../component/admin/LeavePage";
+import HolidayManager from "../component/admin/HolidayManager";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -56,6 +59,12 @@ export default function Dashboard() {
         return <Attendance />;
       case "salary":
         return <Salary />;
+      case "shift":
+        return <ShiftPage/>;
+      case "leave":
+        return <LeavePage/>;
+      case "holidaymanager":
+        return <HolidayManager/>;
       default:
         return <DashboardContent />;
     }
