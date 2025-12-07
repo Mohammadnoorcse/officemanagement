@@ -1,53 +1,24 @@
 import React from "react";
 
-const AttendanceFilters = ({
-  users,
-  selectedUser,
-  setSelectedUser,
-  month,
-  setMonth,
-  search,
-  setSearch,
-  onDownload,
-}) => {
+const AttendanceFilters = ({ month, setMonth, search, setSearch }) => {
   return (
-    <div className="flex flex-wrap gap-2 mb-4 items-center">
-      <select
-        value={selectedUser}
-        onChange={(e) => setSelectedUser(e.target.value)}
-        className="border p-1 rounded"
-      >
-        <option value="">Select User</option>
-        {users.map((user) => (
-          <option key={user.id} value={user.id}>
-            {user.name}
-          </option>
-        ))}
-      </select>
-
+    <div className="flex gap-4 mb-4 flex-wrap">
       <input
         type="month"
         value={month}
         onChange={(e) => setMonth(e.target.value)}
-        className="border p-1 rounded"
+        className="border p-2 rounded"
       />
-
       <input
         type="text"
-        placeholder="Search by date (YYYY-MM-DD)"
+        placeholder="Search by date or user"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="border p-1 rounded"
+        className="border p-2 rounded flex-1"
       />
-
-      <button
-        onClick={onDownload}
-        className="bg-green-600 text-white px-3 py-1 rounded"
-      >
-        Download XML
-      </button>
     </div>
   );
 };
+
 
 export default AttendanceFilters;

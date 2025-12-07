@@ -6,6 +6,7 @@ import Attendance from "../component/admin/Attendance";
 import axios from "axios";
 import UserContent from "../component/user/UserContent";
 import UserSidebar from "../component/user/UserSidebar";
+import UserLeaves from "../component/user/UserLeaves";
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -51,8 +52,8 @@ const UserDashboard = () => {
         return <UserContent />;
       case "attendace":
         return <Attendance />;
-      case "reports":
-        return <ReportsContent />;
+      case "leave":
+        return <UserLeaves />;
       default:
         return <DashboardContent />;
     }

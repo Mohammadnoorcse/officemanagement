@@ -7,7 +7,10 @@ import Attendance from "../component/admin/Attendance";
 import axios from "axios";
 import User from "../component/admin/User";
 import Salary from "../component/admin/Salary";
-import ShiftPage from "../component/admin/Shift";
+import ShiftPage from "../component/admin/ShiftPage";
+import LeavePage from "../component/admin/LeavePage";
+import HolidayManager from "../component/admin/HolidayManager";
+import WeekManagement from "../component/admin/WeekManagement";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -41,7 +44,7 @@ export default function Dashboard() {
     navigate("/login");
   } catch (err) {
     console.error("Logout failed:", err);
-    // Still remove token and navigate to login if needed
+    
     localStorage.removeItem("token");
     navigate("/login");
   }
@@ -58,7 +61,13 @@ export default function Dashboard() {
       case "salary":
         return <Salary />;
       case "shift":
-        return <ShiftPage />;
+        return <ShiftPage/>;
+      case "leave":
+        return <LeavePage/>;
+      case "holidaymanager":
+        return <HolidayManager/>;
+      case "WeekManagement":
+        return <WeekManagement/>;
       default:
         return <DashboardContent />;
     }
