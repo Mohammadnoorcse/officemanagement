@@ -5,105 +5,85 @@ import axios from "axios";
 
 const Attendance = () => {
   const [attendances, setAttendances] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
-  const [month, setMonth] = useState("");
+  const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 10;
 
-  // Fetch all users for the dropdown
-  const fetchUsers = async () => {
+  const token = localStorage.getItem("token");
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL + "/api",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  // Fetch all attendances for the current month
+  const fetchAttendances = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(res.data);
+      const res = await api.get(`/attendances/all?month=${month}`);
+      const dataArray = Array.isArray(res.data)
+        ? res.data
+        : res.data.attendances || [];
+
+      // Keep only rows with login_time (present days)
+      const presentOnly = dataArray.filter((att) => att.login_time !== null);
+
+      setAttendances(presentOnly);
+      setCurrentPage(1);
     } catch (err) {
       console.error(err);
-    }
-  };
-
-  // Fetch attendances based on selected user/month
-  const fetchAttendance = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      let url = `${import.meta.env.VITE_API_URL}/api/attendances`;
-
-      if (selectedUser && month) {
-        url = `${import.meta.env.VITE_API_URL}/api/attendances/${selectedUser}/month?month=${month}`;
-      } else if (selectedUser) {
-        url = `${import.meta.env.VITE_API_URL}/api/attendances/${selectedUser}`;
-      }
-
-      const res = await axios.get(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Handle if API returns { user, attendances } or just array
-      const dataArray = res.data.attendances ? res.data.attendances : res.data;
-      setAttendances(dataArray);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Download XML file for selected user/month
-  const downloadXML = async () => {
-    if (!selectedUser) return alert("Select a user first");
-    try {
-      const token = localStorage.getItem("token");
-      let url = `${import.meta.env.VITE_API_URL}/api/attendances/${selectedUser}/download`;
-      if (month) url += `/${month}`; // pass month if selected
-
-      const res = await axios.get(url, {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: "blob",
-      });
-
-      const blobUrl = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.setAttribute(
-        "download",
-        `attendance_user_${selectedUser}${month ? "_" + month : ""}.xml`
-      );
-      document.body.appendChild(link);
-      link.click();
-    } catch (err) {
-      console.error(err);
+      setAttendances([]);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-    fetchAttendance();
-  }, []);
+    fetchAttendances();
+  }, [month]);
 
-  useEffect(() => {
-    fetchAttendance();
-  }, [selectedUser, month]);
+  // Filter by search (user name or date)
+  const filtered = Array.isArray(attendances)
+    ? attendances.filter(
+        (att) =>
+          att.date.includes(search) ||
+          (att.user &&
+            att.user.name.toLowerCase().includes(search.toLowerCase()))
+      )
+    : [];
 
-  // Filter by search (by date)
-  const filteredAttendance = attendances.filter((att) =>
-    att.date.includes(search)
-  );
+  // Pagination
+  const indexOfLast = currentPage * perPage;
+  const indexOfFirst = indexOfLast - perPage;
+  const currentData = filtered.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filtered.length / perPage);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h2 className="text-xl font-bold mb-2">Attendance Management</h2>
+    <div className="p-4 max-w-6xl mx-auto flex flex-col gap-4">
+      <h2 className="text-2xl font-bold mb-4">Attendance Management</h2>
 
       <AttendanceFilters
-        users={users}
-        selectedUser={selectedUser}
-        setSelectedUser={setSelectedUser}
         month={month}
         setMonth={setMonth}
         search={search}
         setSearch={setSearch}
-        onDownload={downloadXML}
       />
 
-      <AttendanceTable data={filteredAttendance} />
+      <AttendanceTable data={currentData} />
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-4">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            <button
+              key={num}
+              className={`px-3 py-1 rounded ${
+                currentPage === num ? "bg-blue-500 text-white" : "bg-gray-200"
+              }`}
+              onClick={() => setCurrentPage(num)}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

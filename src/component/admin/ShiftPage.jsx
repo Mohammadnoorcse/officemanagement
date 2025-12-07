@@ -209,9 +209,24 @@ export default function ShiftManager() {
                       <td className="border p-2">{s.user?.name}</td>
                       <td className="border p-2">{s.name}</td>
                       <td className="border p-2">{s.date}</td>
-                      <td className="border p-2">{s.start_time}</td>
-                      <td className="border p-2">{s.end_time}</td>
-                      <td className="border p-2 flex justify-center gap-2">
+<td className="border p-2">
+  {s.start_time
+    ? new Date(`1970-01-01T${s.start_time}`).toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "-"}
+</td>
+<td className="border p-2">
+  {s.end_time
+    ? new Date(`1970-01-01T${s.end_time}`).toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "-"}
+</td>              <td className="border p-2 flex justify-center gap-2">
                         <button
                           className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
                           onClick={() => handleEdit(s)}

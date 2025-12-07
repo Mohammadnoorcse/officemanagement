@@ -10,6 +10,7 @@ import Salary from "../component/admin/Salary";
 import ShiftPage from "../component/admin/ShiftPage";
 import LeavePage from "../component/admin/LeavePage";
 import HolidayManager from "../component/admin/HolidayManager";
+import WeekManagement from "../component/admin/WeekManagement";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -65,6 +66,8 @@ export default function Dashboard() {
         return <LeavePage/>;
       case "holidaymanager":
         return <HolidayManager/>;
+      case "WeekManagement":
+        return <WeekManagement/>;
       default:
         return <DashboardContent />;
     }

@@ -12,7 +12,8 @@ const AttendanceTable = ({ data }) => {
     const fetchAddresses = async () => {
       const results = await Promise.all(
         data.map(async (att) => {
-          if (!att.latitude || !att.longitude) return { id: att.id, address: "-" };
+          if (!att.latitude || !att.longitude)
+            return { id: att.id, address: "-" };
 
           try {
             const res = await axios.get(
@@ -26,7 +27,10 @@ const AttendanceTable = ({ data }) => {
         })
       );
 
-      const addrObj = results.reduce((acc, cur) => ({ ...acc, [cur.id]: cur.address }), {});
+      const addrObj = results.reduce(
+        (acc, cur) => ({ ...acc, [cur.id]: cur.address }),
+        {}
+      );
       setAddresses(addrObj);
     };
 
@@ -35,11 +39,15 @@ const AttendanceTable = ({ data }) => {
 
   if (!data || data.length === 0) return <p>No attendance records found.</p>;
 
+  console.log("attendace", data);
+
   return (
     <table className="min-w-full border">
       <thead>
         <tr className="bg-gray-100">
           <th className="p-2 border">Date</th>
+          <th className="p-2 border">image</th>
+          <th className="p-2 border">name</th>
           <th className="p-2 border">Login</th>
           <th className="p-2 border">Logout</th>
           <th className="p-2 border">Login Address</th>
@@ -49,8 +57,25 @@ const AttendanceTable = ({ data }) => {
         {data.map((att) => (
           <tr key={att.id}>
             <td className="p-2 border">{att.date}</td>
-            <td className="p-2 border">{att.login_time || "-"}</td>
-            <td className="p-2 border">{att.logout_time || "-"}</td>
+            <td className="p-2 border">-</td>
+            <td className="p-2 border">{att.user.name}</td>
+            <td className="p-2 border">
+              {att.login_time
+                ? new Date(att.login_time + " UTC").toLocaleString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    hour12: true,
+                  })
+                : "-"}
+            </td>
+            <td className="p-2 border">
+              {att.logout_time
+                ? new Date(att.logout_time + " UTC").toLocaleString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    hour12: true,
+                  })
+                : "-"}
+            </td>
+
             <td className="p-2 border">{addresses[att.id] || "-"}</td>
           </tr>
         ))}
