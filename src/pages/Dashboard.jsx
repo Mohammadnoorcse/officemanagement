@@ -109,7 +109,7 @@ export default function Dashboard() {
        
       </div>
 
-      <div className="flex flex-1 relative">
+      <div className="w-full flex flex-1 relative">
         {/* Sidebar */}
         <Sidebar
           active={active}
@@ -120,7 +120,7 @@ export default function Dashboard() {
         />
 
         {/* Main content */}
-        <div className="flex-1 p-4 md:p-8 bg-gray-100">{renderContent()}</div>
+        <div className="w-[20rem] flex-1 p-4 md:p-8 bg-gray-100">{renderContent()}</div>
       </div>
     </div>
   );

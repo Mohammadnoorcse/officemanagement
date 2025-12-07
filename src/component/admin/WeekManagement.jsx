@@ -54,25 +54,7 @@ export default function WeekManagement() {
       .catch(err => console.error(err));
   };
 
-  // Example: React fetch
-const fetchAttendance = async () => {
-  const token = localStorage.getItem("token");
 
-  const res = await axios.post(
-    `${import.meta.env.VITE_API_URL}/api/attendance/generate-today`,
-    {},
-    {
-      headers: { Authorization: `Bearer ${token}` }
-    }
-  );
-
-  console.log(res.data);
-};
-
-// Call on component mount
-useEffect(() => {
-  fetchAttendance();
-}, []);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">

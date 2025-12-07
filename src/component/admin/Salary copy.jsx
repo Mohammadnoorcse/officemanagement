@@ -115,27 +115,26 @@ const SalaryPage = () => {
         {loading ? (
           <div className="text-center p-4">Loading...</div>
         ) : (
-   <div className="w-full overflow-x-auto">
-  <div className="min-w-[1100px] sm:min-w-full">
-
-    <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
-      <thead className="bg-gray-100 sticky top-0 z-10">
-        <tr className="whitespace-nowrap text-center">
+        <div className="relative w-full">
+  <div className="overflow-x-auto max-w-full scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+    <table className="w-full min-w-[1200px] border-collapse border border-gray-300 text-xs sm:text-sm">
+      <thead className="bg-gray-100 sticky top-0">
+        <tr className="text-center whitespace-nowrap">
           <th className="border px-2 py-1">Name</th>
           <th className="border px-2 py-1">Basic</th>
-          <th className="border px-2 py-1 hidden sm:table-cell">MonthDays</th>
+          <th className="border px-2 py-1">MonthDays</th>
           <th className="border px-2 py-1">Present</th>
-          <th className="border px-2 py-1 hidden md:table-cell">Late</th>
-          <th className="border px-2 py-1 hidden md:table-cell">Leave</th>
+          <th className="border px-2 py-1">Late</th>
+          <th className="border px-2 py-1">Leave</th>
           <th className="border px-2 py-1">Absent</th>
-          <th className="border px-2 py-1 hidden lg:table-cell">Holiday</th>
-          <th className="border px-2 py-1 hidden lg:table-cell">Weekend</th>
-          <th className="border px-2 py-1 hidden lg:table-cell">Overtime</th>
-          <th className="border px-2 py-1 hidden xl:table-cell">OT Amount</th>
-          <th className="border px-2 py-1 hidden xl:table-cell">Late Deduct</th>
-          <th className="border px-2 py-1 hidden xl:table-cell">Deduction</th>
-          <th className="border px-2 py-1 hidden xl:table-cell">Working Days</th>
-          <th className="border px-2 py-1 hidden xl:table-cell">Per Day</th>
+          <th className="border px-2 py-1">Holiday</th>
+          <th className="border px-2 py-1">Weekend</th>
+          <th className="border px-2 py-1">Overtime</th>
+          <th className="border px-2 py-1">OT Amount</th>
+          <th className="border px-2 py-1">Late Deduct</th>
+          <th className="border px-2 py-1">Deduction</th>
+          <th className="border px-2 py-1">Working Days</th>
+          <th className="border px-2 py-1">Per Day</th>
           <th className="border px-2 py-1">Total</th>
           <th className="border px-2 py-1">Status</th>
           <th className="border px-2 py-1">Action</th>
@@ -147,22 +146,21 @@ const SalaryPage = () => {
           <tr key={s.user_id} className="text-center whitespace-nowrap">
             <td className="border px-2 py-1">{s.user_name}</td>
             <td className="border px-2 py-1">{s.basic_salary}</td>
-            <td className="border px-2 py-1 hidden sm:table-cell">{s.month_in_days}</td>
+            <td className="border px-2 py-1">{s.month_in_days}</td>
             <td className="border px-2 py-1">{s.present_days}</td>
-            <td className="border px-2 py-1 hidden md:table-cell">{s.late_days}</td>
-            <td className="border px-2 py-1 hidden md:table-cell">{s.leave_days}</td>
+            <td className="border px-2 py-1">{s.late_days}</td>
+            <td className="border px-2 py-1">{s.leave_days}</td>
             <td className="border px-2 py-1">{s.absent_days}</td>
-            <td className="border px-2 py-1 hidden lg:table-cell">{s.holiday}</td>
-            <td className="border px-2 py-1 hidden lg:table-cell">{s.weekend_days}</td>
-            <td className="border px-2 py-1 hidden lg:table-cell">{s.total_overtime_minutes}</td>
-            <td className="border px-2 py-1 hidden xl:table-cell">{s.overtime_amount}</td>
-            <td className="border px-2 py-1 hidden xl:table-cell">{s.late_deduction_days}</td>
-            <td className="border px-2 py-1 hidden xl:table-cell">{s.deduction_amount}</td>
-            <td className="border px-2 py-1 hidden xl:table-cell">{s.total_working_days}</td>
-            <td className="border px-2 py-1 hidden xl:table-cell">{s.per_day_amount}</td>
+            <td className="border px-2 py-1">{s.holiday}</td>
+            <td className="border px-2 py-1">{s.weekend_days}</td>
+            <td className="border px-2 py-1">{s.total_overtime_minutes}</td>
+            <td className="border px-2 py-1">{s.overtime_amount}</td>
+            <td className="border px-2 py-1">{s.late_deduction_days}</td>
+            <td className="border px-2 py-1">{s.deduction_amount}</td>
+            <td className="border px-2 py-1">{s.total_working_days}</td>
+            <td className="border px-2 py-1">{s.per_day_amount}</td>
             <td className="border px-2 py-1 font-semibold">{s.final_salary}</td>
             <td className="border px-2 py-1 capitalize">{s.status}</td>
-
             <td className="border px-2 py-1">
               {s.status === "pending" ? (
                 <button
@@ -184,11 +182,8 @@ const SalaryPage = () => {
         ))}
       </tbody>
     </table>
-
   </div>
 </div>
-
-
 
         )}
       </div>

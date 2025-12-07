@@ -5,8 +5,29 @@ import graph1 from "../../assets/graph1.png";
 import graph2 from "../../assets/graph2.png";
 import graph3 from "../../assets/graph3.png";
 import graph4 from "../../assets/graph4.png";
+import axios from "axios";
 
 const DashboardContent = () => {
+    // Example: React fetch
+const fetchAttendance = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await axios.post(
+    `${import.meta.env.VITE_API_URL}/api/attendance/generate-today`,
+    {},
+    {
+      headers: { Authorization: `Bearer ${token}` }
+    }
+  );
+
+  console.log(res.data);
+};
+
+// Call on component mount
+useEffect(() => {
+  fetchAttendance();
+}, []);
+
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="w-full flex justify-between items-center">

@@ -103,7 +103,7 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
         </button>
         <button
           className={`py-2 px-4 mb-2 text-left rounded ${
-            active === "WeekManagementr" ? "bg-[#531954] text-white" : ""
+            active === "WeekManagement" ? "bg-[#531954] text-white" : ""
           }`}
           onClick={() => {
             setActive("WeekManagement");
@@ -113,17 +113,7 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
           WeekManagement
         </button>
 
-        <button
-          className={`py-2 px-4 mb-2 text-left rounded ${
-            active === "shift" ? "bg-[#531954] text-white" : ""
-          }`}
-          onClick={() => {
-            setActive("shift");
-            setSidebarOpen(false);
-          }}
-        >
-          shift
-        </button>
+       
 
         {/* Logout button (shows only when sidebar is open on mobile, always visible on desktop) */}
         <button
