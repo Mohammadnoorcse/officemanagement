@@ -8,25 +8,95 @@ import graph4 from "../../assets/graph4.png";
 import axios from "axios";
 
 const DashboardContent = () => {
-    // Example: React fetch
-const fetchAttendance = async () => {
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
+  const [description, setDescription] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [today, setToday] = useState({
+    counts: {
+      present: 0,
+      late: 0,
+      leave: 0,
+    },
+    employees: {
+      present: [],
+      late: [],
+      leave: [],
+    }
+  });
+
   const token = localStorage.getItem("token");
 
-  const res = await axios.post(
-    `${import.meta.env.VITE_API_URL}/api/attendance/generate-today`,
-    {},
-    {
-      headers: { Authorization: `Bearer ${token}` }
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL + "/api",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  // 🔹 Fetch today's attendance summary
+  const fetchAttendanceToday = async () => {
+    try {
+      const res = await api.get("/attendance/today-summary");
+      setToday(res.data); // ✅ FIXED
+    } catch (err) {
+      console.error(err);
     }
-  );
+  };
 
-  console.log(res.data);
-};
+  // 🔹 Generate today's attendance (if needed)
+  const fetchAttendance = async () => {
+    try {
+      await api.post("/attendance/generate-today");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-// Call on component mount
-useEffect(() => {
-  fetchAttendance();
-}, []);
+    /** ------------------ Fetch users ------------------ */
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get("/users");
+      setUsers(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendance();
+    fetchAttendanceToday();
+    fetchUsers();
+
+  }, []);
+
+    // Submit task
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!selectedUser || !description || !startDate || !endDate) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    try {
+      const res = await api.post("/tasks", {
+        user_id: selectedUser,
+        description,
+        start_date: startDate,
+        end_date: endDate,
+        // status defaults to "do" in backend
+      });
+
+      alert("Task created successfully!");
+      setSelectedUser("");
+      setDescription("");
+      setStartDate("");
+      setEndDate("");
+    } catch (err) {
+      console.error(err);
+      alert("Error creating task.");
+    }
+  };
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -35,6 +105,7 @@ useEffect(() => {
           <h1 className="text-xl font-bold text-[#531954]">Hii,Noor!</h1>
           <p className="text-sm text-gray-400">
             You have 2 leave request pending
+            {selectedUser}
           </p>
         </div>
 
@@ -72,7 +143,7 @@ useEffect(() => {
             </div>
 
             <div className="flex justify-between items-end mt-4">
-              <span className="text-base font-bold">70</span>
+              <span className="text-base font-bold">{users.length > 0 ? users.length - 1 : 0}</span>
               <img src={graph1} alt="graph" className="w-16" />
             </div>
           </div>
@@ -88,7 +159,7 @@ useEffect(() => {
             </div>
 
             <div className="flex justify-between items-end mt-4">
-              <span className="text-base font-bold">65</span>
+              <span className="text-base font-bold">{today?.counts?.present ?? 0}</span>
               <img src={graph2} alt="graph" className="w-16" />
             </div>
           </div>
@@ -104,7 +175,7 @@ useEffect(() => {
             </div>
 
             <div className="flex justify-between items-end mt-[2rem]">
-              <span className="text-base font-bold">5</span>
+              <span className="text-base font-bold">{today?.counts?.leave ?? 0}</span>
               <img src={graph3} alt="graph" className="w-16" />
             </div>
           </div>
@@ -120,43 +191,69 @@ useEffect(() => {
             </div>
 
             <div className="flex justify-between items-end mt-4">
-              <span className="text-base font-bold">7</span>
+              <span className="text-base font-bold">{today?.counts?.late ?? 0}</span>
               <img src={graph4} alt="graph" className="w-16" />
             </div>
           </div>
         </div>
         {/* items-2 */}
         <div className="sm:w-1/3 w-full border border-gray-400 p-2 rounded-md">
-          <h2 className="text-sm font-bold text-[#531954]">Task</h2>
+      <h2 className="text-sm font-bold text-[#531954]">Create Task</h2>
 
-          <form action="">
-            <select
-              name="cars"
-              id="cars"
-              className="w-full mt-4 border border-gray-400 rounded "
-            >
-              <option value="volvo">done</option>
-              <option value="saab">Saab</option>
-              <option value="mercedes">Mercedes</option>
-              <option value="audi">Audi</option>
-            </select>
-            <textarea
-              rows="8"
-              name=""
-              id=""
-              placeholder="write the task"
-              className="w-full mt-2 p-4 text-sm rounded border border-gray-300 outline-none"
-            ></textarea>
-            <div className="flex justify-between items-center">
-              <button
-                type="submit"
-                className="bg-[#531954] py-1 px-4 text-white rounded-md cursor-pointer"
-              >
-                submit
-              </button>
-            </div>
-          </form>
-        </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2 mt-2">
+        {/* User select */}
+        <select
+          name="user_id"
+          value={selectedUser}
+          onChange={(e) => setSelectedUser(e.target.value)}
+          className="border p-2 rounded w-full"
+          required
+        >
+          <option value="">Select User</option>
+          {users.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Start Date */}
+        <input
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="border p-2 rounded w-full"
+          required
+        />
+
+        {/* End Date */}
+        <input
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="border p-2 rounded w-full"
+          min={startDate} // ensure end date >= start date
+          required
+        />
+
+        {/* Description */}
+        <textarea
+          rows="6"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Write the task"
+          className="w-full p-2 text-sm rounded border border-gray-300 outline-none"
+          required
+        ></textarea>
+
+        <button
+          type="submit"
+          className="bg-[#531954] py-1 px-4 text-white rounded-md cursor-pointer mt-2"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
       </div>
 
       {/* third section */}
@@ -178,54 +275,48 @@ useEffect(() => {
                 </tr>
               </thead>
 
-              <tbody >
-                <tr>
-                  <td className="p-2 ">
-                    <img
-                      src="https://img.freepik.com/free-photo/close-up-portrait-handsome-smiling-young-man-white-t-shirt-blurry-outdoor-nature_176420-6305.jpg?semt=ais_hybrid&w=740&q=80"
-                      alt="emp"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  </td>
+              <tbody>
+  {today.employees.present.length === 0 ? (
+    <tr>
+      <td colSpan="3" className="p-2 text-center text-gray-400">
+        No present employees
+      </td>
+    </tr>
+  ) : (
+    today.employees.present.map((att) => (
+      <tr key={att.id} className="border-b">
+          <td className="p-2">
+            <img
+              src={att.user?.image || "https://via.placeholder.com/40"}
+              alt="emp"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+        </td>
+        <td className="p-2 text-[14px]">
+          {att.user?.name}
+        </td>
 
-                  <td className="p-2 ">Aminur Rahman</td>
+        <td className="p-2 text-[14px] text-green-600">
+          {att.login_time
+            ? new Date(att.login_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
+        </td>
 
-                  <td className="p-2  text-green-600">09:15 AM</td>
-
-                  <td className="p-2  text-red-600">06:05 PM</td>
-                </tr>
-
-                <tr>
-                  <td className="p-2 ">
-                    <img
-                      src="https://img.freepik.com/free-photo/close-up-portrait-handsome-smiling-young-man-white-t-shirt-blurry-outdoor-nature_176420-6305.jpg?semt=ais_hybrid&w=740&q=80"
-                      alt="emp"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  </td>
-
-                  <td className="p-2 ">Noor Mohammad</td>
-
-                  <td className="p-2  text-green-600">10:00 AM</td>
-
-                  <td className="p-2  text-red-600">07:00 PM</td>
-                </tr>
-                <tr>
-                  <td className="p-2 ">
-                    <img
-                      src="https://img.freepik.com/free-photo/close-up-portrait-handsome-smiling-young-man-white-t-shirt-blurry-outdoor-nature_176420-6305.jpg?semt=ais_hybrid&w=740&q=80"
-                      alt="emp"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  </td>
-
-                  <td className="p-2 ">Noor Mohammad</td>
-
-                  <td className="p-2  text-green-600">10:00 AM</td>
-
-                  <td className="p-2  text-red-600">07:00 PM</td>
-                </tr>
-              </tbody>
+        <td className="p-2 text-[14px] text-red-600">
+          {att.logout_time
+            ? new Date(att.logout_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
             </table>
           </div>
         </div>
@@ -242,36 +333,41 @@ useEffect(() => {
                 </tr>
               </thead>
 
-              <tbody >
-                <tr>
-                 
+              <tbody>
+  {today.employees.late.length === 0 ? (
+    <tr>
+      <td colSpan="3" className="p-2 text-center text-gray-400">
+        No late employees
+      </td>
+    </tr>
+  ) : (
+    today.employees.late.map((att) => (
+      <tr key={att.id} className="border-b">
+        <td className="p-2 text-[14px]">
+          {att.user?.name}
+        </td>
 
-                  <td className="p-2 text-[14px]">Aminur Rahman</td>
+        <td className="p-2 text-[14px] text-green-600">
+          {att.login_time
+            ? new Date(att.login_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
+        </td>
 
-                  <td className="p-2 text-[14px] text-green-600 ">09:15 AM</td>
-
-                  <td className="p-2 text-[14px] text-red-600">06:05 PM</td>
-                </tr>
-
-                <tr>
-                 
-
-                  <td className="p-2 text-[14px]">Noor Mohammad</td>
-
-                  <td className="p-2 text-[14px] text-green-600">10:00 AM</td>
-
-                  <td className="p-2 text-[14px] text-red-600">07:00 PM</td>
-                </tr>
-                <tr>
-                  
-
-                  <td className="p-2 text-[14px]">Noor Mohammad</td>
-
-                  <td className="p-2 text-[14px] text-green-600">10:00 AM</td>
-
-                  <td className="p-2 text-[14px] text-red-600">07:00 PM</td>
-                </tr>
-              </tbody>
+        <td className="p-2 text-[14px] text-red-600">
+          {att.logout_time
+            ? new Date(att.logout_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
             </table>
           </div>
         </div>
