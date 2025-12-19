@@ -13,7 +13,7 @@ export default function UserSidebar({ active, setActive, handleLogout, sidebarOp
 
       <div
         className={`
-            w-64 flex flex-col p-4
+            w-64 h-screen bg-white flex flex-col p-4
           md:relative md:translate-x-0
           fixed top-0 left-0  z-30
           transform transition-transform duration-300

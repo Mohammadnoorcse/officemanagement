@@ -30,19 +30,26 @@ const User = () => {
   }, []);
 
     // Filter data
-  const filteredData = users.filter(
-    (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.email.toLowerCase().includes(search.toLowerCase()) ||
-      item.role.toLowerCase().includes(search.toLowerCase())
+const filteredData =
+  Array.isArray(users) &&
+  users.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase()) ||
+    item.email.toLowerCase().includes(search.toLowerCase()) ||
+    item.role.toLowerCase().includes(search.toLowerCase())
   );
 
   // Pagination
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+// Ensure filteredData is always an array
+const filteredDataArray = Array.isArray(filteredData) ? filteredData : [];
+
+// Total pages
+const totalPages = Math.ceil(filteredDataArray.length / rowsPerPage);
+
+// Paginated data
+const paginatedData = filteredDataArray.slice(
+  (currentPage - 1) * rowsPerPage,
+  currentPage * rowsPerPage
+);
 
   // Handle Role Update
   const updateRole = async () => {

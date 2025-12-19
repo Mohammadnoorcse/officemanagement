@@ -7,6 +7,7 @@ import LiveTrackerPage from "./pages/LiveTrackerPage.jsx";
 import AutoLocationUpdater from "./pages/AutoLocationUpdater.jsx";
 import { AdminRoute, UserRoute } from "./routes/ProtectedRoutes.jsx";
 
+
 function App() {
   const role = localStorage.getItem("role");
   const token = localStorage.getItem("token");
@@ -54,6 +55,7 @@ function App() {
 
         {/* Live tracking */}
         <Route path="/location/:id" element={<LiveTrackerPage />} />
+        
 
         {/* Redirect unknown paths */}
         <Route path="*" element={<Navigate to={defaultRoute} replace />} />

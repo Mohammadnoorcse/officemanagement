@@ -196,11 +196,11 @@ const UserContent = () => {
       <div className="border p-2 rounded shadow">
         <h2 className="font-bold">Tasks</h2>
 
-        {getTask.tasks?.length === 0 ? (
+        {getTask.tasks.length === 0 ? (
           <p className="text-sm text-gray-400 mt-2">No tasks found</p>
         ) : (
           <div className="grid md:grid-cols-3 gap-4 mt-4">
-            {getTask.tasks?.map((item) => (
+            {getTask.tasks.map((item) => (
               <div
                 key={item.id}
                 className="border rounded p-4 cursor-pointer"

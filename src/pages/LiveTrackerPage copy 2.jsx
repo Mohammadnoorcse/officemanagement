@@ -39,22 +39,45 @@ const LiveTrackerPage = () => {
   };
 
   // Fetch human-readable address from OpenCage API
-  const fetchAddress = async (lat, lon) => {
+  // const fetchAddress = async (lat, lon) => {
+  //   if (!lat || !lon) return;
+
+  //   try {
+  //     const res = await axios.get(
+  //       `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${OPENCAGE_API_KEY}`
+  //     );
+
+  //     if (res.data.results && res.data.results.length > 0) {
+  //       setAddress(res.data.results[0].formatted);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching address", err);
+  //     setAddress("");
+  //   }
+  // };
+
+    const fetchAddress = async (lat, lon) => {
     if (!lat || !lon) return;
 
     try {
       const res = await axios.get(
-        `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${OPENCAGE_API_KEY}`
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
       );
 
-      if (res.data.results && res.data.results.length > 0) {
-        setAddress(res.data.results[0].formatted);
+      
+
+      if (res.data && res.data.address) {
+        // res.data.display_name gives full address
+        setAddress(res.data.display_name);
+      } else {
+        setAddress("Address not found");
       }
     } catch (err) {
       console.error("Error fetching address", err);
       setAddress("");
     }
   };
+
 
   // Fetch location on mount and every 5 seconds
   useEffect(() => {

@@ -112,6 +112,28 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
         >
           WeekManagement
         </button>
+        <button
+          className={`py-2 px-4 mb-2 text-left rounded ${
+            active === "task" ? "bg-[#531954] text-white" : ""
+          }`}
+          onClick={() => {
+            setActive("task");
+            setSidebarOpen(false);
+          }}
+        >
+          Task
+        </button>
+        <button
+          className={`py-2 px-4 mb-2 text-left rounded ${
+            active === "location" ? "bg-[#531954] text-white" : ""
+          }`}
+          onClick={() => {
+            setActive("location");
+            setSidebarOpen(false);
+          }}
+        >
+          Location
+        </button>
 
        
 

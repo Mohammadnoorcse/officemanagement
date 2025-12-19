@@ -11,6 +11,8 @@ import ShiftPage from "../component/admin/ShiftPage";
 import LeavePage from "../component/admin/LeavePage";
 import HolidayManager from "../component/admin/HolidayManager";
 import WeekManagement from "../component/admin/WeekManagement";
+import Task from "../component/admin/Task";
+import AllUserLocation from "../component/admin/AllUserLocation";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -68,6 +70,10 @@ export default function Dashboard() {
         return <HolidayManager/>;
       case "WeekManagement":
         return <WeekManagement/>;
+      case "task":
+        return <Task/>;
+      case "location":
+        return <AllUserLocation/>;
       default:
         return <DashboardContent />;
     }
