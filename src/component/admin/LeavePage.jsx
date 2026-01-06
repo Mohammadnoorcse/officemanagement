@@ -31,7 +31,7 @@ export default function LeavePage() {
    * ------------------------ */
   const updateStatus = async (leaveId, status) => {
     try {
-      await api.patch(`/leave/${leaveId}/status`, { status });
+      await api.put(`/leave/${leaveId}/status`, { status });
       fetchLeaves(); // reload
     } catch (err) {
       console.error("Error updating leave status:", err);

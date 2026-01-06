@@ -52,7 +52,8 @@ const UserContent = () => {
   const fetchAttendances = async () => {
     try {
       const res = await api.get("/attendance/current-month-summary/user");
-      setAttendance(res.data);
+      setAttendance(res?.data);
+      // console.log('responsive',res);
     } catch (err) {
       console.error(err);
     }
@@ -69,7 +70,7 @@ const UserContent = () => {
 
   const updateTaskStatus = async (taskId, status) => {
     try {
-      await api.patch(`/tasks/${taskId}/status`, { status });
+      await api.put(`/tasks/${taskId}/status`, { status });
       fetchTask();
       setEditId(null);
     } catch (err) {
@@ -276,7 +277,7 @@ const Stat = ({ icon, label, value }) => (
 
 const Modal = ({ children, close }) => (
   <div
-    className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center"
+    className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-40"
     onClick={close}
   >
     <div
