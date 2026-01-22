@@ -228,6 +228,7 @@ const paginatedData = filteredDataArray.slice(
             >
               <option value="admin">admin</option>
               <option value="user">user</option>
+              <option value="teamleader">Team Leader</option>
             </select>
 
             {/* Buttons */}

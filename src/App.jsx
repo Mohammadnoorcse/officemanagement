@@ -5,7 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import RegisterUser from "./pages/RegisterUser.jsx";
 import LiveTrackerPage from "./pages/LiveTrackerPage.jsx";
 import AutoLocationUpdater from "./pages/AutoLocationUpdater.jsx";
-import { AdminRoute, UserRoute } from "./routes/ProtectedRoutes.jsx";
+import { AdminRoute, UserRoute,TeamLeaderRoute } from "./routes/ProtectedRoutes.jsx";
+import LeaderDashboard from "./pages/LeaderDashboard.jsx";
 
 
 function App() {
@@ -14,7 +15,12 @@ function App() {
 
   let defaultRoute = "/login";
   if (token) {
-    defaultRoute = role === "admin" ? "/admin/dashboard" : "/dashboard";
+    defaultRoute =
+      role === "admin"
+        ? "/admin/dashboard"
+        : role === "teamleader"
+        ? "/teamleader/dashboard"
+        : "/dashboard"; // user
   }
 
   return (
@@ -50,6 +56,16 @@ function App() {
             <UserRoute>
               <UserDashboard />
             </UserRoute>
+          }
+        />
+
+          {/* Team Leader routes */}
+        <Route
+          path="/teamleader/dashboard"
+          element={
+            <TeamLeaderRoute>
+              <LeaderDashboard />
+            </TeamLeaderRoute>
           }
         />
 

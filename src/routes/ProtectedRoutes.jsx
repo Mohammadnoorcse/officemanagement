@@ -28,3 +28,16 @@ export function UserRoute({ children }) {
 
   return children;
 }
+
+
+// ✅ New TeamLeader Route
+export function TeamLeaderRoute({ children }) {
+  const role = localStorage.getItem("role");
+  const token = localStorage.getItem("token");
+
+  if (!token || role !== "teamleader") {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}

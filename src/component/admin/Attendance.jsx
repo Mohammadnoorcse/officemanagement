@@ -1,31 +1,46 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import AttendanceFilters from "./AttendanceFilters";
 import AttendanceTable from "./AttendanceTable";
-import axios from "axios";
 
 const Attendance = () => {
+  // ✅ Always current month
+  const [month, setMonth] = useState(
+    new Date().toISOString().slice(0, 7)
+  );
+
   const [attendances, setAttendances] = useState([]);
-  const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 10;
 
+  // ✅ Get userId from localStorage (safe)
+  const storedUser =
+    JSON.parse(localStorage.getItem("user")) || {};
+  const userId =
+    storedUser.id || localStorage.getItem("user_id");
+
   const token = localStorage.getItem("token");
+
   const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL + "/api",
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  // Fetch all attendances for the current month
+  // ✅ Fetch attendance (USER + MONTH)
   const fetchAttendances = async () => {
-    try {
-      const res = await api.get(`/attendances/all?month=${month}`);
-      const dataArray = Array.isArray(res.data)
-        ? res.data
-        : res.data.attendances || [];
+    if (!userId) return;
 
-      // Keep only rows with login_time (present days)
-      const presentOnly = dataArray.filter((att) => att.login_time !== null);
+    try {
+      const res = await api.get(
+        `/attendances/${userId}/month`,
+        { params: { month } }
+      );
+
+      // Optional: present days only
+      const presentOnly = res.data.filter(
+        (att) => att.login_time !== null
+      );
 
       setAttendances(presentOnly);
       setCurrentPage(1);
@@ -35,21 +50,21 @@ const Attendance = () => {
     }
   };
 
+  // 🔁 Auto fetch on month change
   useEffect(() => {
     fetchAttendances();
   }, [month]);
 
-  // Filter by search (user name or date)
-  const filtered = Array.isArray(attendances)
-    ? attendances.filter(
-        (att) =>
-          att.date.includes(search) ||
-          (att.user &&
-            att.user.name.toLowerCase().includes(search.toLowerCase()))
-      )
-    : [];
+  // 🔍 Search filter
+  const filtered = attendances.filter(
+    (att) =>
+      att.date.includes(search) ||
+      att.user?.name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+  );
 
-  // Pagination
+  // 📄 Pagination
   const indexOfLast = currentPage * perPage;
   const indexOfFirst = indexOfLast - perPage;
   const currentData = filtered.slice(indexOfFirst, indexOfLast);
@@ -57,7 +72,9 @@ const Attendance = () => {
 
   return (
     <div className="p-4 max-w-6xl mx-auto flex flex-col gap-4">
-      <h2 className="text-2xl font-bold mb-4">Attendance Management</h2>
+      <h2 className="text-2xl font-bold">
+        My Attendance ({month})
+      </h2>
 
       <AttendanceFilters
         month={month}
@@ -68,20 +85,23 @@ const Attendance = () => {
 
       <AttendanceTable data={currentData} />
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center gap-2 mt-4">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-            <button
-              key={num}
-              className={`px-3 py-1 rounded ${
-                currentPage === num ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-              onClick={() => setCurrentPage(num)}
-            >
-              {num}
-            </button>
-          ))}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+            (num) => (
+              <button
+                key={num}
+                className={`px-3 py-1 rounded ${
+                  currentPage === num
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+                onClick={() => setCurrentPage(num)}
+              >
+                {num}
+              </button>
+            )
+          )}
         </div>
       )}
     </div>

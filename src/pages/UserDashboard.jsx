@@ -7,9 +7,12 @@ import axios from "axios";
 import UserContent from "../component/user/UserContent";
 import UserSidebar from "../component/user/UserSidebar";
 import UserLeaves from "../component/user/UserLeaves";
+import MyTasks from "../component/user/MyTasks";
+import ChatLayout from "../component/chat/ChatLayout";
+import SubmitReport from "../component/user/SubmitReport";
 
 const UserDashboard = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [active, setActive] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -46,18 +49,27 @@ const UserDashboard = () => {
   }
 };
 
-  const renderContent = () => {
-    switch (active) {
-      case "dashboard":
-        return <UserContent />;
-      case "attendace":
-        return <Attendance />;
-      case "leave":
-        return <UserLeaves />;
-      default:
-        return <DashboardContent />;
-    }
-  };
+const renderContent = () => {
+  switch (active) {
+    case "dashboard":
+      return <UserContent />;
+    case "groups":
+      return <MyGroups />;
+    case "tasks":
+      return <MyTasks />;
+    case "chat":
+      return <ChatLayout />;
+    case "reports":
+      return <SubmitReport />;
+    case "attendance":
+      return <Attendance />;
+    case "leave":
+      return <UserLeaves />;
+    default:
+      return null;
+  }
+};
+
   return (
     <div className="flex flex-col min-h-screen">
           {/* Top Navbar */}

@@ -13,6 +13,7 @@ import HolidayManager from "../component/admin/HolidayManager";
 import WeekManagement from "../component/admin/WeekManagement";
 import Task from "../component/admin/Task";
 import AllUserLocation from "../component/admin/AllUserLocation";
+import AdminAttendace from "../component/admin/AdminAttendace";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ export default function Dashboard() {
       case "user":
         return <User/>;
       case "attendace":
-        return <Attendance />;
+        return <AdminAttendace />;
       case "salary":
         return <Salary />;
       case "shift":

@@ -1,11 +1,13 @@
 import React from "react";
 
-export default function UserSidebar({ active, setActive, handleLogout, sidebarOpen, setSidebarOpen }) {
-  const userMenus = [
+export default function LeaderSidebar({ active, setActive, handleLogout, sidebarOpen, setSidebarOpen }) {
+
+    const leaderMenus = [
   { key: "dashboard", label: "Dashboard" },
-  { key: "tasks", label: "My Tasks" },
-  { key: "chat", label: "Chat" },
-  { key: "reports", label: "Submit Report" },
+  { key: "groups", label: "Groups" },        // create + add members
+  { key: "teamTasks", label: "Assign Tasks" },
+  { key: "chat", label: "Team Chat" },
+  { key: "reports", label: "Team Reports" },
   { key: "attendance", label: "Attendance" },
   { key: "leave", label: "Leave" },
 ];
@@ -30,20 +32,20 @@ export default function UserSidebar({ active, setActive, handleLogout, sidebarOp
       >
        
 
-     {userMenus.map(item => (
-    <button
-      key={item.key}
-      className={`py-2 px-4 mb-2 rounded text-left ${
-        active === item.key ? "bg-[#531954] text-white" : ""
-      }`}
-      onClick={() => {
-        setActive(item.key);
-        setSidebarOpen(false);
-      }}
-    >
-      {item.label}
-    </button>
-  ))}
+    {leaderMenus.map(item => (
+  <button
+    key={item.key}
+    className={`py-2 px-4 mb-2 rounded text-left ${
+      active === item.key ? "bg-[#531954] text-white" : ""
+    }`}
+    onClick={() => {
+      setActive(item.key);
+      setSidebarOpen(false);
+    }}
+  >
+    {item.label}
+  </button>
+))}
 
         <button
           className="mt-auto py-2 px-4 bg-red-600 rounded cursor-pointer text-white"

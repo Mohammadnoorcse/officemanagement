@@ -137,6 +137,7 @@ export default function RegisterUser() {
         >
           <option value="user">User</option>
           <option value="admin">Admin</option>
+          <option value="teamleader">TeamLeader</option>
         </select>
 
         {/* Status Dropdown */}

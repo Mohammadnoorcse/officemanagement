@@ -54,8 +54,17 @@ export default function Login() {
           setSuccess("Login successful!");
 
           // Redirect
+          // const redirectTo =
+          //   user?.role === "admin" ? "/admin/dashboard" : "/dashboard";
+          // navigate(redirectTo);
+
           const redirectTo =
-            user?.role === "admin" ? "/admin/dashboard" : "/dashboard";
+            user?.role === "admin"
+              ? "/admin/dashboard"
+              : user?.role === "teamleader"
+              ? "/teamleader/dashboard"
+              : "/dashboard"; // regular user
+
           navigate(redirectTo);
 
           
