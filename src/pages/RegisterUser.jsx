@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function RegisterUser() {
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -17,15 +19,19 @@ export default function RegisterUser() {
   });
 
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👈 password visibility toggle
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
     if (files) {
       setForm({ ...form, [name]: files[0] });
     } else {
       setForm({ ...form, [name]: value });
     }
+  };
+
+  const togglePassword = () => {
+    setShowPassword((prev) => !prev);
   };
 
   const handleSubmit = async (e) => {
@@ -137,7 +143,6 @@ export default function RegisterUser() {
         >
           <option value="user">User</option>
           <option value="admin">Admin</option>
-          <option value="teamleader">TeamLeader</option>
         </select>
 
         {/* Status Dropdown */}
@@ -152,26 +157,42 @@ export default function RegisterUser() {
         </select>
 
         {/* Password */}
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-          required
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded"
+            required
+          />
+          <span
+            onClick={togglePassword}
+            className="absolute right-3 top-2.5 cursor-pointer text-gray-500 text-xl"
+          >
+            {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+          </span>
+        </div>
 
         {/* Confirm Password */}
-        <input
-          type="password"
-          name="password_confirmation"
-          placeholder="Confirm Password"
-          value={form.password_confirmation}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-          required
-        />
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password_confirmation"
+            placeholder="Confirm Password"
+            value={form.password_confirmation}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded"
+            required
+          />
+          <span
+            onClick={togglePassword}
+            className="absolute right-3 top-2.5 cursor-pointer text-gray-500 text-xl"
+          >
+            {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+          </span>
+        </div>
 
         {/* Image Upload */}
         <input

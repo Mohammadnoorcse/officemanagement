@@ -55,6 +55,18 @@ export default function Sidebar({ active, setActive, handleLogout, sidebarOpen, 
         >
           Attendace
         </button>
+        
+        <button
+          className={`py-2 px-4 mb-2 text-left rounded ${
+            active === "records" ? "bg-[#531954] text-white" : ""
+          }`}
+          onClick={() => {
+            setActive("records");
+            setSidebarOpen(false);
+          }}
+        >
+          Attendace Records
+        </button>
 
         <button
           className={`py-2 px-4 mb-2 text-left rounded ${

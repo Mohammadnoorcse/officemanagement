@@ -14,6 +14,7 @@ import WeekManagement from "../component/admin/WeekManagement";
 import Task from "../component/admin/Task";
 import AllUserLocation from "../component/admin/AllUserLocation";
 import AdminAttendace from "../component/admin/AdminAttendace";
+import AttendaceRecord from "../component/admin/AttendaceRecord";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -61,6 +62,8 @@ export default function Dashboard() {
         return <User/>;
       case "attendace":
         return <AdminAttendace />;
+      case "records":
+        return <AttendaceRecord />;
       case "salary":
         return <Salary />;
       case "shift":

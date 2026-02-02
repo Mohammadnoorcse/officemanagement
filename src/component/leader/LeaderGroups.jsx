@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 
 const LeaderGroups = () => {
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState([]);     // ✅ Always array
   const [users, setUsers] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -10,13 +10,13 @@ const LeaderGroups = () => {
   const [selectedUser, setSelectedUser] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Load groups, users & current user
   useEffect(() => {
     fetchCurrentUser();
     fetchGroups();
     fetchUsers();
   }, []);
 
+  /* ================= CURRENT USER ================= */
   const fetchCurrentUser = async () => {
     try {
       const res = await api.get("/user");
@@ -26,25 +26,36 @@ const LeaderGroups = () => {
     }
   };
 
+  /* ================= GROUPS ================= */
   const fetchGroups = async () => {
     try {
       const res = await api.get("/group/my-groups");
-      setGroups(res.data);
+      console.log("GROUP RESPONSE:", res.data); // 🔍 debug once
+
+      const groupsArray =
+        Array.isArray(res.data) ? res.data :
+        Array.isArray(res.data.groups) ? res.data.groups :
+        Array.isArray(res.data.data) ? res.data.data :
+        [];
+
+      setGroups(groupsArray);
     } catch {
       alert("Failed to fetch groups");
+      setGroups([]);
     }
   };
 
+  /* ================= USERS ================= */
   const fetchUsers = async () => {
     try {
       const res = await api.get("/users");
-      setUsers(res.data);
+      setUsers(Array.isArray(res.data) ? res.data : res.data.data || []);
     } catch {
       alert("Failed to fetch users");
     }
   };
 
-  // Create Group
+  /* ================= CREATE GROUP ================= */
   const createGroup = async () => {
     if (!groupName.trim()) return alert("Group name required");
 
@@ -61,9 +72,10 @@ const LeaderGroups = () => {
     }
   };
 
-  // Add member to group
+  /* ================= ADD MEMBER ================= */
   const addMember = async () => {
-    if (!selectedGroup || !selectedUser) return alert("Select group & user");
+    if (!selectedGroup || !selectedUser)
+      return alert("Select group & user");
 
     try {
       await api.post(`/group/${selectedGroup.id}/add-member`, {
@@ -77,29 +89,32 @@ const LeaderGroups = () => {
     }
   };
 
-  // Remove member
+  /* ================= REMOVE MEMBER ================= */
   const removeMember = async (userId) => {
     if (!selectedGroup) return;
-    if (!window.confirm("Are you sure you want to remove this member?")) return;
+
+    if (!window.confirm("Remove this member?")) return;
 
     try {
-      await api.post(`/group/${selectedGroup.id}/remove-member`, { user_id: userId });
+      await api.post(`/group/${selectedGroup.id}/remove-member`, {
+        user_id: userId,
+      });
       fetchGroups();
-      alert("Member removed successfully");
+      alert("Member removed");
     } catch {
       alert("Failed to remove member");
     }
   };
 
-  // Delete group
+  /* ================= DELETE GROUP ================= */
   const deleteGroup = async (groupId) => {
-    if (!window.confirm("Are you sure you want to delete this group?")) return;
+    if (!window.confirm("Delete this group?")) return;
 
     try {
       await api.delete(`/group/${groupId}`);
       fetchGroups();
       if (selectedGroup?.id === groupId) setSelectedGroup(null);
-      alert("Group deleted successfully");
+      alert("Group deleted");
     } catch {
       alert("Failed to delete group");
     }
@@ -107,75 +122,77 @@ const LeaderGroups = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-      {/* Create Group */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-xl shadow-lg p-6 flex flex-col justify-between">
+
+      {/* ================= CREATE GROUP ================= */}
+      <div className="bg-purple-600 text-white rounded-xl p-6 shadow">
         <h2 className="text-xl font-bold mb-4">Create Group</h2>
         <input
           value={groupName}
           onChange={(e) => setGroupName(e.target.value)}
           placeholder="Group Name"
-          className="p-3 rounded text-black w-full mb-4 shadow-inner"
+          className="w-full p-3 mb-4 rounded text-black"
         />
         <button
           onClick={createGroup}
           disabled={loading}
-          className="bg-white text-purple-600 font-semibold px-4 py-2 rounded shadow hover:bg-gray-100 transition"
+          className="bg-white text-purple-600 px-4 py-2 rounded font-semibold"
         >
           {loading ? "Creating..." : "Create Group"}
         </button>
       </div>
 
-      {/* Groups List */}
-      <div className="bg-white rounded-xl shadow-lg p-6 md:col-span-1">
-        <h2 className="text-lg font-semibold mb-4">My Groups</h2>
-        {groups.length === 0 && <p className="text-gray-400">No groups found</p>}
-        <div className="space-y-3">
-          {groups.map((group) => (
-            <div
-              key={group.id}
-              onClick={() => setSelectedGroup(group)}
-              className={`p-3 rounded-lg border cursor-pointer flex justify-between items-center transition ${
-                selectedGroup?.id === group.id
-                  ? "bg-purple-50 border-purple-500"
-                  : "hover:bg-gray-50"
-              }`}
-            >
-              <div>
-                <p className="font-medium">{group.name}</p>
-                <p className="text-xs text-gray-500">
-                  Members: {group.members?.length || 0}
-                </p>
-              </div>
-              {/* Delete button only for group leader */}
-              {currentUser?.id === group.created_by && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteGroup(group.id);
-                  }}
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition text-sm"
-                >
-                  Delete
-                </button>
-              )}
+      {/* ================= GROUP LIST ================= */}
+      <div className="bg-white rounded-xl p-6 shadow">
+        <h2 className="font-semibold mb-4">My Groups</h2>
+
+        {groups.length === 0 && (
+          <p className="text-gray-400">No groups found</p>
+        )}
+
+        {groups.map((group) => (
+          <div
+            key={group.id}
+            onClick={() => setSelectedGroup(group)}
+            className={`p-3 mb-2 border rounded cursor-pointer flex justify-between
+              ${selectedGroup?.id === group.id
+                ? "bg-purple-50 border-purple-500"
+                : "hover:bg-gray-50"}`}
+          >
+            <div>
+              <p className="font-medium">{group.name}</p>
+              <p className="text-xs text-gray-500">
+                Members: {group.members?.length || 0}
+              </p>
             </div>
-          ))}
-        </div>
+
+            {currentUser?.id === group.created_by && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteGroup(group.id);
+                }}
+                className="bg-red-500 text-white px-2 py-1 rounded text-sm"
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        ))}
       </div>
 
-      {/* Selected Group & Members */}
+      {/* ================= GROUP DETAILS ================= */}
       {selectedGroup && currentUser && (
-        <div className="bg-white rounded-xl shadow-lg p-6 md:col-span-2 flex flex-col gap-6">
-          <h2 className="text-lg font-semibold">
+        <div className="bg-white rounded-xl p-6 shadow md:col-span-2">
+          <h2 className="font-semibold mb-4">
             Manage: <span className="text-purple-600">{selectedGroup.name}</span>
           </h2>
 
           {/* Add Member */}
-          <div className="flex flex-col md:flex-row gap-3 items-center">
+          <div className="flex gap-3 mb-4">
             <select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
-              className="border p-2 rounded flex-1 shadow-inner"
+              className="border p-2 rounded flex-1"
             >
               <option value="">Select User</option>
               {users.map((user) => (
@@ -184,37 +201,32 @@ const LeaderGroups = () => {
                 </option>
               ))}
             </select>
+
             <button
               onClick={addMember}
-              className="bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700 transition"
+              className="bg-purple-600 text-white px-4 py-2 rounded"
             >
-              Add Member
+              Add
             </button>
           </div>
 
-          {/* Members List */}
-          <div className="bg-gray-50 p-4 rounded-lg shadow-inner">
-            <h3 className="font-semibold mb-2 text-gray-700">Members</h3>
-            <ul className="divide-y divide-gray-200">
-              {selectedGroup.members?.map((member) => (
-                <li
-                  key={member.id}
-                  className="flex justify-between items-center py-2"
-                >
-                  <span>{member.name} ({member.email})</span>
-                  {/* Remove button only for group leader */}
-                  {selectedGroup.created_by === currentUser.id && (
-                    <button
-                      onClick={() => removeMember(member.id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition text-sm"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Members */}
+          <ul className="divide-y">
+            {selectedGroup.members?.map((member) => (
+              <li key={member.id} className="py-2 flex justify-between">
+                <span>{member.name} ({member.email})</span>
+
+                {selectedGroup.created_by === currentUser.id && (
+                  <button
+                    onClick={() => removeMember(member.id)}
+                    className="text-red-500"
+                  >
+                    Remove
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

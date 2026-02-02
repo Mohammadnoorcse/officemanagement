@@ -6,40 +6,41 @@ const ChatWindow = ({ group }) => {
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const messagesEndRef = useRef(null);
+  const intervalRef = useRef(null);
 
   // Fetch logged-in user
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/user"); // returns {id, name, email}
-        setCurrentUser(res.data);
-      } catch (err) {
-        console.error("Failed to fetch user", err);
-      }
-    };
-    fetchUser();
+    api.get("/user").then(res => setCurrentUser(res.data));
   }, []);
 
-  // Fetch messages
-  useEffect(() => {
+  // Fetch messages function
+  const fetchMessages = async () => {
     if (!group) return;
-    const fetchMessages = async () => {
-      try {
-        const res = await api.get(`/group-chat/${group.id}/messages`);
-        setMessages(res.data);
-        scrollToBottom();
-      } catch (err) {
-        console.error("Failed to fetch messages", err);
-      }
-    };
-    fetchMessages();
-  }, [group]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    try {
+      const res = await api.get(`/group-chat/${group.id}/messages`);
+      setMessages(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Failed to fetch messages", err);
+    }
   };
 
-  useEffect(scrollToBottom, [messages]);
+  // Auto refresh messages
+  useEffect(() => {
+    if (!group) return;
+
+    fetchMessages(); 
+
+    intervalRef.current = setInterval(() => {
+      fetchMessages();
+    }, 1000); 
+
+    return () => clearInterval(intervalRef.current);
+  }, [group]);
+
+  // Auto scroll
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   if (!group)
     return (
@@ -66,15 +67,15 @@ const ChatWindow = ({ group }) => {
                 isSender ? "items-end" : "items-start"
               }`}
             >
-              {/* Sender */}
               <p className="text-xs text-gray-500 mb-1">
                 {isSender ? "You" : m.user_name}
               </p>
 
-              {/* Message bubble */}
               <div
                 className={`p-2 max-w-xs rounded-lg shadow ${
-                  isSender ? "bg-purple-600 text-white" : "bg-white text-gray-800"
+                  isSender
+                    ? "bg-purple-600 text-white"
+                    : "bg-white text-gray-800"
                 }`}
               >
                 <p className="text-sm">{m.message}</p>

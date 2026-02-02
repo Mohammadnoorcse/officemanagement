@@ -6,11 +6,12 @@ import LeaderSidebar from "../component/leader/LeaderSidebar";
 import UserContent from "../component/user/UserContent";
 import Attendance from "../component/admin/Attendance";
 import UserLeaves from "../component/user/UserLeaves";
-import DashboardContent from "../component/admin/DashboardContent";
 import AssignTasks from "../component/leader/AssignTasks";
 import ChatLayout from "../component/chat/ChatLayout";
 import LeaderGroups from "../component/leader/LeaderGroups";
 import TeamReports from "../component/leader/TeamReports";
+import DashboardContent from "../component/admin/DashboardContent";
+import LeaderContent from "../component/leader/LeaderContent";
 
 const LeaderDashboard = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const LeaderDashboard = () => {
 const renderContent = () => {
   switch (active) {
     case "dashboard":
-      return <DashboardContent />;
+      return <LeaderContent/>;
     case "groups":
       return <LeaderGroups />;
     case "teamTasks":
